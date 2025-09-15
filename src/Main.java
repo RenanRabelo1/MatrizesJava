@@ -40,16 +40,29 @@ public class Main {
 
 
         double[][] Ziltom = {
-                {2, 4,6, 12},
-                {1, 2, 3, 6},
-                {4, 8, 12, 24}
+                {1, -2 ,1},
+                {2, 3, -1},
+                {3, 1, 2}
         };
 
+        double [] Renan = {
+                0, 5, 11
+        };
 
-        System.out.println(al.solve(Ziltom));
+        double [][] Luis = al.Gauss(Ziltom, Renan);
 
 
-        }
+        al.mostrarMatriz(Luis);
+
+        double [][] Julio= al.gaussJordan(Luis);
+
+
+        al.mostrarMatriz(Julio);
+
+
+
+
+    }
 
     }
 
