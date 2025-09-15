@@ -31,41 +31,53 @@ public class LinearAlgebra {
     }
 
     public double[][] gauss(double[][] A) {
-        int n = A.length; // Aqui pra linha
-        int m = A[0].length; // Aqui pra coluna
-        // Agora tem as dimensões
+        int n = A.length;
+        int m = A[0].length;
 
-        double[][] ampliada = new double [n][m]; // Vou armazenar a matriz aqui
-        for(int i = 0; i < n; i++){
-            for(int j = 0; j < m; j++){
-                ampliada[i][j] = A[i][j]; //Pronto, matriz armazenada
+        // Copiar matriz manualmente
+        double[][] ampliada = new double[n][m];
+        for(int i = 0; i < n; i++) {
+            for(int j = 0; j < m; j++) {
+                ampliada[i][j] = A[i][j];
             }
         }
-        for(int j = 0; j < n - 1 && j < m; j++){ // n - 1 por motivos de índice começar no 0
 
-            double maxValue = Math.abs(ampliada[j][j]); // começa a procura pelo maior valor das linhas
-            int indicePivo = j;
+        // Determinar o número máximo de colunas para pivotamento
+        int maxCol = n;
+        if (m - 1 < n) {
+            maxCol = m - 1;
+        }
 
-            for(int k = j + 1; k < n; k++){ // Aqui a gente vai encontrar o maior valor da linha
-                if(Math.abs(ampliada[k][j]) > maxValue) {
-                    maxValue = Math.abs(ampliada[k][j]);
-                    indicePivo = k;        // Vamo armazenar só o índice que ele já permite que no futuro a gnt troque a linha inteira mesmo
+        for(int col = 0; col < maxCol; col++) {
+            // Pivotamento parcial
+            int indicePivo = col;
+            double maxValue = Math.abs(ampliada[col][col]);
+
+            for(int linha = col + 1; linha < n; linha++) {
+                double valorAbsoluto = Math.abs(ampliada[linha][col]);
+                if (valorAbsoluto > maxValue) {
+                    maxValue = valorAbsoluto;
+                    indicePivo = linha;
                 }
             }
 
-            if(indicePivo != j){ // Tem q ser diferente de j(linha atual) porque se não, não precisa trocar as linhas, já tá aqui mesmo
-                for(int coluna = 0; coluna < m; coluna++){
-                double temporaria = ampliada[j][coluna]; // Se a gente não fizer isso, a gnt perde esse valor
-                    ampliada[j][coluna] = ampliada[indicePivo][coluna]; // armazenamo só o indice, mas trocamo a linha inteira
-                    ampliada[indicePivo][coluna] = temporaria;
+            // Trocar linhas se necessário
+            if(indicePivo != col) {
+                for(int j = 0; j < m; j++) {
+                    double temp = ampliada[col][j];
+                    ampliada[col][j] = ampliada[indicePivo][j];
+                    ampliada[indicePivo][j] = temp;
                 }
             }
-            if(ampliada[j][j] > 0 || ampliada[j][j] < 0){ for(int i = j+1;  i < n; i++){
-                double km = ampliada[i][j]/ampliada[j][j]; // Se for igual a 0 ferro
-                for (int k = j; k < m; k++){
-                    ampliada[i][k] = ampliada[i][k] - km * ampliada[j][k]; //Aqui a fórmula da susbtituição
+
+            // Eliminação se o pivô não for zero
+            if(Math.abs(ampliada[col][col]) > 1e-10) {
+                for(int i = col + 1; i < n; i++) {
+                    double multiplicador = ampliada[i][col] / ampliada[col][col];
+                    for(int j = col; j < m; j++) {
+                        ampliada[i][j] = ampliada[i][j] - multiplicador * ampliada[col][j];
+                    }
                 }
-            }
             }
         }
         return ampliada;
