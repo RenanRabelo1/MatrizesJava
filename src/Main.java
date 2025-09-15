@@ -54,11 +54,19 @@ public class Main {
 
         al.mostrarMatriz(Luis);
 
-        double [][] Julio= al.gaussJordan(Luis);
+        System.out.println();
+        double [][] Julio = al.gaussJordan(Luis);
 
 
         al.mostrarMatriz(Julio);
 
+        int n = Ziltom.length;
+
+        System.out.println("Solução do Sistema Linear:");
+
+        for (int i = 0; i < n; i++) {
+            System.out.printf("x%d = %.0f\n", i + 1, Julio[i][n]);
+        }
 
 
 
