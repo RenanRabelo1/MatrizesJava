@@ -30,57 +30,53 @@ public class LinearAlgebra {
         return SomaMatrizes1;
     }
 
-    public double[][] gauss(double[][] A) {
-        int n = A.length;
-        int m = A[0].length;
 
-        // Copiar matriz manualmente
-        double[][] ampliada = new double[n][m];
-        for(int i = 0; i < n; i++) {
-            for(int j = 0; j < m; j++) {
-                ampliada[i][j] = A[i][j];
-            }
-        }
 
-        // Determinar o número máximo de colunas para pivotamento
-        int maxCol = n;
-        if (m - 1 < n) {
-            maxCol = m - 1;
-        }
+        public double[][] resolverSistema(double[][] A, double[] B) {
+            int n = A.length;
 
-        for(int col = 0; col < maxCol; col++) {
-            // Pivotamento parcial
-            int indicePivo = col;
-            double maxValue = Math.abs(ampliada[col][col]);
-
-            for(int linha = col + 1; linha < n; linha++) {
-                double valorAbsoluto = Math.abs(ampliada[linha][col]);
-                if (valorAbsoluto > maxValue) {
-                    maxValue = valorAbsoluto;
-                    indicePivo = linha;
+            // Criar matriz ampliada
+            double[][] amp = new double[n][n+1];
+            for(int i = 0; i < n; i++) {
+                for(int j = 0; j < n; j++) {
+                    amp[i][j] = A[i][j];
                 }
+                amp[i][n] = B[i];
             }
 
-            // Trocar linhas se necessário
-            if(indicePivo != col) {
-                for(int j = 0; j < m; j++) {
-                    double temp = ampliada[col][j];
-                    ampliada[col][j] = ampliada[indicePivo][j];
-                    ampliada[indicePivo][j] = temp;
-                }
-            }
+            // Eliminação Gaussiana com pivotamento parcial
+            for(int j = 0; j < n-1; j++) {
+                // Pivotamento parcial - encontrar o maior valor na coluna j
+                int indicePivo = j;
+                double maxValor = Math.abs(amp[j][j]);
 
-            // Eliminação se o pivô não for zero
-            if(Math.abs(ampliada[col][col]) > 1e-10) {
-                for(int i = col + 1; i < n; i++) {
-                    double multiplicador = ampliada[i][col] / ampliada[col][col];
-                    for(int j = col; j < m; j++) {
-                        ampliada[i][j] = ampliada[i][j] - multiplicador * ampliada[col][j];
+                for(int k = j+1; k < n; k++) {
+                    if(Math.abs(amp[k][j]) > maxValor) {
+                        maxValor = Math.abs(amp[k][j]);
+                        indicePivo = k;
                     }
                 }
+
+                // Trocar linhas se necessário
+                if(indicePivo != j) {
+                    double[] temp = amp[j];
+                    amp[j] = amp[indicePivo];
+                    amp[indicePivo] = temp;
+
+                }
+
+                // Eliminação
+                for(int i = j+1; i < n; i++) {
+                    double m = amp[i][j] / amp[j][j];
+                    for(int k = j; k < n+1; k++) {
+                        amp[i][k] = amp[i][k] - m * amp[j][k];
+                    }
+
+                }
             }
-        }
-        return ampliada;
+
+            System.out.println("Matriz na Forma Escada Linha Equivalente a A:");
+            return amp;
     }
 
     public double[][] solve(double[][] ampliada) {
